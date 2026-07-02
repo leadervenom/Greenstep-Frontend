@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://greenstep-backend-qehf.onrender.com/api/$1"
+    },
+    {
+      "source": "/auth/(.*)",
+      "destination": "https://greenstep-backend-qehf.onrender.com/auth/$1"
+    }
+  ]
+}
