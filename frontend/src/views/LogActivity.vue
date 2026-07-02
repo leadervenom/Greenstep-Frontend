@@ -48,7 +48,15 @@ const router = useRouter();
 
 const activity_type_id = ref("");
 const amount = ref("");
-const date = ref(new Date().toISOString().slice(0, 10));
+
+function formatDateInput(value = new Date()) {
+  const year = value.getFullYear();
+  const month = String(value.getMonth() + 1).padStart(2, "0");
+  const day = String(value.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+const date = ref(formatDateInput());
 const activityTypes = ref([]);
 const saving = ref(false);
 const error = ref("");
