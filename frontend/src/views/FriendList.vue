@@ -10,6 +10,12 @@
   <div class="form-card compact-form">
     <div v-if="error" class="error-banner">{{ error }}</div>
     <div v-if="message" class="success-banner">{{ message }}</div>
+
+    <div v-if="currentUser" class="user-id-card">
+      <span class="user-id-label">Your ID</span>
+      <strong>#{{ currentUser.id }}</strong>
+    </div>
+
     <form @submit.prevent="send">
       <div class="field">
         <label>Send request by user ID</label>
@@ -27,7 +33,10 @@
         <div class="avatar">{{ initials(f.name) }}</div>
         <div>
           <h3 style="margin-bottom:2px;">{{ f.name }}</h3>
-          <span style="color: var(--color-text-muted); font-size: 13px;">{{ f.eco_points }} eco points</span>
+          <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:4px;">
+            <span style="color: var(--color-text-muted); font-size: 13px;">{{ f.eco_points }} eco points</span>
+            <span style="color: var(--color-clay); font-size: 13px; font-weight:600;">ID: {{ f.id }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -42,9 +51,11 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { getFriends, sendRequest } from "../api/friend";
+import { me } from "../api/auth";
 import { apiErrorMessage } from "../api/client";
 
 const friends = ref([]);
+const currentUser = ref(null);
 const receiverId = ref("");
 const loading = ref(true);
 const sending = ref(false);
@@ -73,6 +84,15 @@ async function load() {
   }
 }
 
+async function loadProfile() {
+  try {
+    const res = await me();
+    currentUser.value = res.data ?? null;
+  } catch {
+    currentUser.value = null;
+  }
+}
+
 async function send() {
   sending.value = true;
   error.value = "";
@@ -89,12 +109,36 @@ async function send() {
   }
 }
 
-onMounted(load);
+onMounted(async () => {
+  await load();
+  await loadProfile();
+});
 </script>
 
 <style scoped>
 .compact-form{
   max-width:520px;
   margin-bottom:18px;
+}
+
+.user-id-card{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  background:var(--moss-soft);
+  color:var(--forest);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:10px 12px;
+  margin-bottom:12px;
+  font-size:14px;
+}
+
+.user-id-label{
+  color:var(--color-text-muted);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
 }
 </style>
