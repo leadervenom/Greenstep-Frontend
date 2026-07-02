@@ -44,6 +44,7 @@ const error = ref("");
 async function submit() {
   error.value = "";
   try {
+    localStorage.removeItem("token");
     const res = await login({ email: email.value, password: password.value });
     localStorage.setItem("token", res.data.access_token);
     router.push(route.query.redirect?.toString() || "/");
