@@ -13,8 +13,14 @@ import Goal from "../views/Goal.vue";
 import PhotoGallery from "../views/PhotoGallery.vue";
 import Leaderboard from "../views/Leaderboard.vue";
 
+const isAuthenticated = () => Boolean(localStorage.getItem("token"));
+
 const routes = [
-  { path: "/", component: Dashboard, meta: { requiresAuth: true } },
+  {
+    path: "/",
+    redirect: () => (isAuthenticated() ? "/dashboard" : "/login"),
+  },
+  { path: "/dashboard", component: Dashboard, meta: { requiresAuth: true } },
   { path: "/login", component: Login, meta: { hideLayout: true } },
   { path: "/register", component: Register, meta: { hideLayout: true } },
   { path: "/activities", component: ActivityList, meta: { requiresAuth: true } },
@@ -41,7 +47,7 @@ router.beforeEach((to) => {
   }
 
   if ((to.path === "/login" || to.path === "/register") && token) {
-    return "/";
+    return "/dashboard";
   }
 });
 
